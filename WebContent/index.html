@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Person Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-edit {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            background: #45a049;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .btn-delete:hover {
+            background: #da190b;
+        }
+
+        .btn-cancel {
+            background: #757575;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-cancel:hover {
+            background: #616161;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-bar button {
+            padding: 12px 30px;
+        }
+
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .person-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .person-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .person-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .person-info {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .person-info p {
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+
+        .person-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .person-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Person Management System</h1>
+            <p>Manage your contacts efficiently with our modern interface</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="search-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by name or ID...">
+                <button class="btn btn-primary" onclick="searchPerson()">🔍 Search</button>
+                <button class="btn btn-primary" onclick="loadAllPersons()">↻ Show All</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2 id="formTitle">➕ Add New Person</h2>
+                <form id="personForm">
+                    <input type="hidden" id="personId">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age *</label>
+                        <input type="number" id="age" required min="1" max="150" placeholder="Enter age">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Add Person</button>
+                    <button type="button" class="btn btn-cancel" id="cancelBtn" style="display:none;" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📋 All Persons (<span id="personCount">0</span>)</h2>
+                <div id="personsList">
+                    <div class="loading">Loading persons...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/tp333/api/users';
+        let isEditMode = false;
+
+        // Load all persons on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllPersons();
+            
+            document.getElementById('personForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (isEditMode) {
+                    updatePerson();
+                } else {
+                    addPerson();
+                }
+            });
+        });
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+
+        // Load all persons
+        async function loadAllPersons() {
+            try {
+                const response = await fetch(`${API_BASE}/affiche`);
+                if (!response.ok) throw new Error('Failed to fetch persons');
+                
+                const persons = await response.json();
+                displayPersons(persons);
+            } catch (error) {
+                document.getElementById('personsList').innerHTML = 
+                    '<div class="empty-state">❌ Error loading persons. Make sure the server is running.</div>';
+                console.error('Error:', error);
+            }
+        }
+
+        // Display persons
+        function displayPersons(persons) {
+            const container = document.getElementById('personsList');
+            document.getElementById('personCount').textContent = persons.length;
+
+            if (!persons || persons.length === 0) {
+                container.innerHTML = '<div class="empty-state">📭 No persons found. Add your first person!</div>';
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'person-grid';
+
+            persons.forEach(person => {
+                const card = document.createElement('div');
+                card.className = 'person-card';
+                // Use data attributes instead of onclick parameters to avoid escaping issues
+                card.innerHTML = `
+                    <h3>${person.name}</h3>
+                    <div class="person-info">
+                        <p><strong>ID:</strong> <span class="badge">#${person.id}</span></p>
+                        <p><strong>Age:</strong> ${person.age} years old</p>
+                    </div>
+                    <div class="person-actions">
+                        <button class="btn btn-edit" data-id="${person.id}" data-name="${person.name}" data-age="${person.age}" onclick="editPersonFromCard(this)">✏️ Edit</button>
+                        <button class="btn btn-delete" onclick="deletePerson(${person.id})">🗑️ Delete</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        // Add person
+        async function addPerson() {
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+
+            if (!name || !age) {
+                showAlert('Please fill all fields', 'error');
+                return;
+            }
+
+            try {
+                const person = {
+                    name: name,
+                    age: parseInt(age)
+                };
+
+                const response = await fetch(`${API_BASE}/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(person)
+                });
+
+                if (!response.ok) throw new Error('Failed to add person');
+
+                const result = await response.json();
+                if (result.state === 'ok') {
+                    showAlert('✅ Person added successfully!', 'success');
+                } else {
+                    showAlert('❌ ' + result.message, 'error');
+                }
+
+                document.getElementById('personForm').reset();
+                loadAllPersons();
+            } catch (error) {
+                showAlert('❌ Error adding person', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Edit person from card button
+        function editPersonFromCard(button) {
+            const id = button.getAttribute('data-id');
+            const name = button.getAttribute('data-name');
+            const age = button.getAttribute('data-age');
+            editPerson(id, name, age);
+        }
+
+        // Edit person
+        function editPerson(id, name, age) {
+            isEditMode = true;
+            document.getElementById('personId').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('age').value = age;
+            document.getElementById('formTitle').textContent = '✏️ Edit Person';
+            document.getElementById('submitBtn').textContent = 'Update Person';
+            document.getElementById('cancelBtn').style.display = 'block';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function updatePerson() {
+            const id = document.getElementById('personId').value;
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+
+            if (!id || !name || !age) {
+                showAlert('Please fill all fields', 'error');
+                return;
+            }
+
+            try {
+                const person = {
+                    id: parseInt(id),
+                    name: name,
+                    age: parseInt(age)
+                };
+
+                const response = await fetch(`${API_BASE}/update`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(person)
+                });
+
+                if (!response.ok) throw new Error('Failed to update person');
+
+                const result = await response.json();
+                if (result.state === 'ok') {
+                    showAlert('✅ Person updated successfully!', 'success');
+                } else {
+                    showAlert('❌ ' + result.message, 'error');
+                }
+
+                cancelEdit();
+                loadAllPersons();
+            } catch (error) {
+                showAlert('❌ Error updating person', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            isEditMode = false;
+            document.getElementById('personForm').reset();
+            document.getElementById('personId').value = '';
+            document.getElementById('formTitle').textContent = '➕ Add New Person';
+            document.getElementById('submitBtn').textContent = 'Add Person';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Delete person
+        async function deletePerson(id) {
+            if (!confirm('Are you sure you want to delete this person?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/remove/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to delete person');
+
+                showAlert('✅ Person deleted successfully!', 'success');
+                loadAllPersons();
+            } catch (error) {
+                showAlert('❌ Error deleting person', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Search person
+        async function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            
+            if (!searchTerm) {
+                showAlert('⚠️ Please enter a search term', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/affiche`);
+                if (!response.ok) throw new Error('Failed to search');
+                
+                const allPersons = await response.json();
+                
+                // Filter by name or ID
+                const filtered = allPersons.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    p.id.toString() === searchTerm
+                );
+
+                if (filtered.length === 0) {
+                    showAlert('❌ No person found with that name or ID', 'error');
+                    return;
+                }
+
+                displayPersons(filtered);
+                showAlert(`✅ Found ${filtered.length} person(s)`, 'success');
+            } catch (error) {
+                showAlert('❌ Error searching person', 'error');
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
