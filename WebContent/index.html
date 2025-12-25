@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Person Management System</title>
     <style>
+        /* ===== GLOBAL STYLES ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Main page styling with gradient background */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,11 +20,13 @@
             padding: 20px;
         }
 
+        /* Main container with max width */
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
+        /* ===== HEADER SECTION ===== */
         .header {
             text-align: center;
             color: white;
@@ -40,6 +44,8 @@
             opacity: 0.9;
         }
 
+        /* ===== MAIN LAYOUT ===== */
+        /* Two-column layout: form on left, person list on right */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -47,6 +53,8 @@
             margin-bottom: 30px;
         }
 
+        /* ===== CARD STYLING ===== */
+        /* Reusable card component for forms and lists */
         .card {
             background: white;
             border-radius: 15px;
@@ -62,6 +70,7 @@
             padding-bottom: 10px;
         }
 
+        /* ===== FORM STYLING ===== */
         .form-group {
             margin-bottom: 15px;
         }
@@ -88,6 +97,8 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        /* ===== BUTTON STYLING ===== */
+        /* Base button styles */
         .btn {
             padding: 12px 25px;
             border: none;
@@ -111,6 +122,7 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
+        /* Edit button (green) */
         .btn-edit {
             background: #4CAF50;
             color: white;
@@ -123,6 +135,7 @@
             background: #45a049;
         }
 
+        /* Delete button (red) */
         .btn-delete {
             background: #f44336;
             color: white;
@@ -134,6 +147,7 @@
             background: #da190b;
         }
 
+        /* Cancel button (gray) */
         .btn-cancel {
             background: #757575;
             color: white;
@@ -145,6 +159,7 @@
             background: #616161;
         }
 
+        /* ===== SEARCH SECTION ===== */
         .search-section {
             background: white;
             border-radius: 15px;
@@ -175,12 +190,15 @@
             padding: 12px 30px;
         }
 
+        /* ===== PERSON CARDS GRID ===== */
+        /* Responsive grid layout for displaying persons */
         .person-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
 
+        /* Individual person card in the grid */
         .person-card {
             background: white;
             border-radius: 12px;
@@ -201,6 +219,7 @@
             font-size: 1.3em;
         }
 
+        /* Person details information display */
         .person-info {
             color: #666;
             margin-bottom: 15px;
@@ -211,17 +230,21 @@
             font-size: 0.95em;
         }
 
+        /* Edit/Delete button actions container */
         .person-actions {
             display: flex;
             gap: 10px;
         }
 
+        /* ===== STATE MESSAGES ===== */
+        /* Empty state when no persons are found */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #999;
         }
 
+        /* Loading state message */
         .loading {
             text-align: center;
             padding: 40px;
@@ -229,6 +252,8 @@
             font-size: 1.2em;
         }
 
+        /* ===== ALERT MESSAGES ===== */
+        /* Base alert styling */
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -242,6 +267,7 @@
             border-left: 4px solid #28a745;
         }
 
+        /* Error alert styling */
         .alert-error {
             background: #f8d7da;
             color: #721c24;
@@ -262,6 +288,8 @@
             }
         }
 
+        /* ===== BADGE STYLING ===== */
+        /* ID badge styling for person cards */
         .badge {
             display: inline-block;
             padding: 5px 12px;
@@ -318,10 +346,15 @@
     </div>
 
     <script>
+        /* ===== JAVASCRIPT APPLICATION ===== */
+        /* API endpoint for all user/person operations */
         const API_BASE = 'http://localhost:8080/tp333/api/users';
+        
+        /* Flag to track if form is in edit or create mode */
         let isEditMode = false;
 
-        // Load all persons on page load
+        /* ===== INITIALIZATION ===== */
+        /* Initialize app when DOM is fully loaded */
         document.addEventListener('DOMContentLoaded', () => {
             loadAllPersons();
             
@@ -335,7 +368,8 @@
             });
         });
 
-        // Show alert message
+        /* ===== HELPER FUNCTIONS ===== */
+        /* Display success or error alert messages to user */
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
             const alert = document.createElement('div');
@@ -343,12 +377,14 @@
             alert.textContent = message;
             alertContainer.appendChild(alert);
 
+            /* Auto-remove alert after 3 seconds */
             setTimeout(() => {
                 alert.remove();
             }, 3000);
         }
 
-        // Load all persons
+        /* ===== DATA LOADING FUNCTIONS ===== */
+        /* Fetch and load all persons from the server */
         async function loadAllPersons() {
             try {
                 const response = await fetch(`${API_BASE}/affiche`);
@@ -363,19 +399,22 @@
             }
         }
 
-        // Display persons
+        /* Render persons list to UI */
         function displayPersons(persons) {
             const container = document.getElementById('personsList');
             document.getElementById('personCount').textContent = persons.length;
 
+            /* Show empty state if no persons found */
             if (!persons || persons.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 No persons found. Add your first person!</div>';
                 return;
             }
 
+            /* Create grid container for person cards */
             const grid = document.createElement('div');
             grid.className = 'person-grid';
 
+            /* Create a card for each person */
             persons.forEach(person => {
                 const card = document.createElement('div');
                 card.className = 'person-card';
@@ -398,22 +437,27 @@
             container.appendChild(grid);
         }
 
-        // Add person
+        /* ===== CREATE/UPDATE FUNCTIONS ===== */
+        /* Create a new person and add to database */
         async function addPerson() {
+            /* Get form input values */
             const name = document.getElementById('name').value;
             const age = document.getElementById('age').value;
 
+            /* Validate form fields are not empty */
             if (!name || !age) {
                 showAlert('Please fill all fields', 'error');
                 return;
             }
 
             try {
+                /* Create person object */
                 const person = {
                     name: name,
                     age: parseInt(age)
                 };
 
+                /* Send POST request to add new person */
                 const response = await fetch(`${API_BASE}/add`, {
                     method: 'POST',
                     headers: {
@@ -425,12 +469,14 @@
                 if (!response.ok) throw new Error('Failed to add person');
 
                 const result = await response.json();
+                /* Check if operation was successful */
                 if (result.state === 'ok') {
                     showAlert('✅ Person added successfully!', 'success');
                 } else {
                     showAlert('❌ ' + result.message, 'error');
                 }
 
+                /* Clear form and reload person list */
                 document.getElementById('personForm').reset();
                 loadAllPersons();
             } catch (error) {
@@ -439,7 +485,7 @@
             }
         }
 
-        // Edit person from card button
+        /* Extract person data from card button and open edit form */
         function editPersonFromCard(button) {
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
@@ -447,8 +493,9 @@
             editPerson(id, name, age);
         }
 
-        // Edit person
+        /* Switch form to edit mode and populate with person data */
         function editPerson(id, name, age) {
+            /* Update form state for editing */
             isEditMode = true;
             document.getElementById('personId').value = id;
             document.getElementById('name').value = name;
@@ -457,26 +504,32 @@
             document.getElementById('submitBtn').textContent = 'Update Person';
             document.getElementById('cancelBtn').style.display = 'block';
             
+            /* Scroll to form for better UX */
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        /* Update existing person in database */
         async function updatePerson() {
+            /* Get current form values */
             const id = document.getElementById('personId').value;
             const name = document.getElementById('name').value;
             const age = document.getElementById('age').value;
 
+            /* Validate all fields are filled */
             if (!id || !name || !age) {
                 showAlert('Please fill all fields', 'error');
                 return;
             }
 
             try {
+                /* Create updated person object */
                 const person = {
                     id: parseInt(id),
                     name: name,
                     age: parseInt(age)
                 };
 
+                /* Send PUT request to update person */
                 const response = await fetch(`${API_BASE}/update`, {
                     method: 'PUT',
                     headers: {
@@ -488,12 +541,14 @@
                 if (!response.ok) throw new Error('Failed to update person');
 
                 const result = await response.json();
+                /* Verify update success */
                 if (result.state === 'ok') {
                     showAlert('✅ Person updated successfully!', 'success');
                 } else {
                     showAlert('❌ ' + result.message, 'error');
                 }
 
+                /* Reset form and reload list */
                 cancelEdit();
                 loadAllPersons();
             } catch (error) {
@@ -502,8 +557,10 @@
             }
         }
 
-        // Cancel edit
+        /* ===== UTILITY FUNCTIONS ===== */
+        /* Reset form from edit mode back to create mode */
         function cancelEdit() {
+            /* Restore form to initial state */
             isEditMode = false;
             document.getElementById('personForm').reset();
             document.getElementById('personId').value = '';
@@ -512,13 +569,16 @@
             document.getElementById('cancelBtn').style.display = 'none';
         }
 
-        // Delete person
+        /* ===== DELETE FUNCTION ===== */
+        /* Delete a person from the database */
         async function deletePerson(id) {
+            /* Confirm deletion before proceeding */
             if (!confirm('Are you sure you want to delete this person?')) {
                 return;
             }
 
             try {
+                /* Send DELETE request */
                 const response = await fetch(`${API_BASE}/remove/${id}`, {
                     method: 'DELETE'
                 });
@@ -533,35 +593,42 @@
             }
         }
 
-        // Search person
+        /* ===== SEARCH FUNCTION ===== */
+        /* Search persons by name or ID */
         async function searchPerson() {
+            /* Get search input value */
             const searchTerm = document.getElementById('searchInput').value.trim();
             
+            /* Validate search term is not empty */
             if (!searchTerm) {
                 showAlert('⚠️ Please enter a search term', 'error');
                 return;
             }
 
             try {
+                /* Fetch all persons */
                 const response = await fetch(`${API_BASE}/affiche`);
                 if (!response.ok) throw new Error('Failed to search');
                 
                 const allPersons = await response.json();
                 
-                // Filter by name or ID
+                /* Filter results by name (case-insensitive) or exact ID match */
                 const filtered = allPersons.filter(p => 
                     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     p.id.toString() === searchTerm
                 );
 
+                /* Show error if no matches found */
                 if (filtered.length === 0) {
                     showAlert('❌ No person found with that name or ID', 'error');
                     return;
                 }
 
+                /* Display filtered results */
                 displayPersons(filtered);
                 showAlert(`✅ Found ${filtered.length} person(s)`, 'success');
             } catch (error) {
+                /* Handle any errors during search operation */
                 showAlert('❌ Error searching person', 'error');
                 console.error('Error:', error);
             }
